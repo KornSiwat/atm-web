@@ -4,7 +4,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import th.ac.ku.atm.model.BankAccount;
-import th.ac.ku.atm.model.Customer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +35,13 @@ public class BankAccountService {
     }
 
     public List<BankAccount> getBankAccounts() {
-        return new ArrayList<BankAccount>(bankAccountList);
+        String url = "http://localhost:8091/api/bankaccount/";
+
+        ResponseEntity<BankAccount[]> response =
+                restTemplate.getForEntity(url, BankAccount[].class);
+
+        BankAccount[] accounts = response.getBody();
+        return Arrays.asList(accounts);
     }
 
     public BankAccount findBankAccount(int id) {
@@ -45,5 +50,11 @@ public class BankAccountService {
                 return bankAccount;
         }
         return null;
+    }
+
+    public void openAccount(BankAccount bankAccount) {
+        String url = "http://localhost:8091/api/bankaccount";
+
+        restTemplate.postForObject(url, bankAccount, BankAccount.class);
     }
 }
